@@ -3,10 +3,9 @@
 import { useEffect, useState } from "react";
 import { getLeadDetail, approveOutreach, simulateInboundReply } from "@/app/actions";
 import Link from "next/link";
-import { useRouter, useParams } from "next/navigation";
+import { useParams } from "next/navigation";
 
 export default function LeadDetailPage() {
-  const router = useRouter();
   const params = useParams();
   const leadId = params.id as string;
 
@@ -37,7 +36,6 @@ export default function LeadDetailPage() {
 
   useEffect(() => {
     fetchLeadDetail();
-    // Auto-refresh every 3s to capture background worker status transitions
     const interval = setInterval(fetchLeadDetail, 3000);
     return () => clearInterval(interval);
   }, [leadId]);
@@ -62,7 +60,6 @@ export default function LeadDetailPage() {
     try {
       await simulateInboundReply(leadId, replySubject, replyBody);
       setReplyBody("");
-      // Add simulated delay to let worker run
       await new Promise(resolve => setTimeout(resolve, 2000));
       await fetchLeadDetail();
     } catch (e) {
@@ -74,18 +71,19 @@ export default function LeadDetailPage() {
 
   if (loading && !data) {
     return (
-      <div className="h-[60vh] flex items-center justify-center text-neutral-400">
-        Loading lead details...
+      <div className="h-[60vh] flex flex-col items-center justify-center text-neutral-550 font-light text-sm tracking-wide">
+        <div className="w-5 h-5 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin mb-3" />
+        <span>Loading lead profile details...</span>
       </div>
     );
   }
 
   if (!data) {
     return (
-      <div className="p-8 text-center text-neutral-400">
-        <p className="font-semibold">Lead not found</p>
+      <div className="p-8 text-center text-neutral-500 text-xs font-light">
+        <p className="font-bold text-neutral-350">Lead record not found</p>
         <Link href="/leads" className="text-indigo-400 hover:underline mt-2 inline-block">
-          &larr; Back to Leads Pipeline
+          &larr; Back to Pipeline
         </Link>
       </div>
     );
@@ -108,14 +106,14 @@ export default function LeadDetailPage() {
     };
 
     return (
-      <span className={`px-3 py-1 rounded-full text-xs border font-medium uppercase tracking-wider ${badges[status] || "bg-neutral-800 text-neutral-400"}`}>
+      <span className={`px-3 py-1 rounded-full text-[9px] border font-bold tracking-widest uppercase ${badges[status] || "bg-neutral-800 text-neutral-400"}`}>
         {status.replace('_', ' ')}
       </span>
     );
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-6">
       
       {/* Back button & header bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -123,122 +121,131 @@ export default function LeadDetailPage() {
           href="/leads"
           className="text-neutral-400 hover:text-neutral-200 text-xs font-semibold flex items-center gap-1"
         >
-          &larr; Back to Pipeline
+          &larr; BACK TO PIPELINE
         </Link>
         <div className="flex items-center gap-3">
-          <span className="text-xs text-neutral-500">Lead Status:</span>
+          <span className="text-[10px] font-mono text-neutral-500 uppercase tracking-widest">LEAD STATUS</span>
           {getStatusBadge(lead.status)}
         </div>
       </div>
 
-      {/* Grid Layout (Top half: Research & Scoring; Bottom half: Communication logs & Simulation) */}
+      {/* Grid Layout (Top half: Research & Scoring) */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
         {/* Lead Basic Info & Research (2/3 width) */}
         <div className="lg:col-span-2 space-y-6">
           
           {/* Core profile */}
-          <div className="p-6 rounded-2xl bg-neutral-900 border border-neutral-900 shadow-md">
-            <h2 className="text-2xl font-bold text-neutral-100">{lead.companyName}</h2>
-            <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs text-neutral-400 mt-2">
-              <span className="flex items-center gap-1">👤 Contact: <strong>{lead.name}</strong></span>
-              <span className="flex items-center gap-1">✉️ Email: <strong>{lead.email}</strong></span>
-              <span className="flex items-center gap-1">🔗 Website: 
-                <a href={`https://${lead.website}`} target="_blank" rel="noreferrer" className="text-indigo-400 hover:underline">
-                  {lead.website}
-                </a>
-              </span>
+          <div className="glass-plate-textured p-6 shadow-md">
+            <div className="glass-content">
+              <span className="text-[9px] font-mono text-neutral-500 tracking-widest uppercase font-bold">Target Account</span>
+              <h2 className="text-2xl font-bold text-neutral-100 tracking-tight mt-1">{lead.companyName}</h2>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-[11px] text-neutral-400 mt-4 pt-4 border-t border-white/5 font-light">
+                <span className="flex items-center gap-2">👤 CONTACT: <strong className="text-neutral-200">{lead.name}</strong></span>
+                <span className="flex items-center gap-2">✉️ EMAIL: <strong className="text-neutral-250 font-mono">{lead.email}</strong></span>
+                <span className="flex items-center gap-2">🔗 WEBSITE: 
+                  <a href={`https://${lead.website}`} target="_blank" rel="noreferrer" className="text-indigo-400 hover:underline font-mono">
+                    {lead.website}
+                  </a>
+                </span>
+              </div>
             </div>
           </div>
 
           {/* AI Research results */}
-          <div className="p-6 rounded-2xl bg-neutral-900 border border-neutral-900 shadow-md min-h-[220px]">
-            <h3 className="text-sm font-bold text-neutral-300 uppercase tracking-wider mb-4">
-              🔍 AI SCRAPING & RESEARCH SUMMARY
-            </h3>
+          <div className="glass-plate-textured p-6 shadow-md min-h-[220px]">
+            <div className="glass-content space-y-4">
+              <h3 className="font-display text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-4">
+                🔍 AI SCRAPING & RESEARCH TELEMETRY
+              </h3>
 
-            {!research ? (
-              <div className="flex flex-col items-center justify-center h-[120px] text-neutral-500 text-center">
-                <div className="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin mb-2" />
-                <p className="text-xs">Gathering website details in background...</p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                <div>
-                  <h4 className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1">Company Summary</h4>
-                  <p className="text-xs text-neutral-300 leading-relaxed font-light">{research.summary}</p>
+              {!research ? (
+                <div className="flex flex-col items-center justify-center h-[120px] text-neutral-500 text-center">
+                  <div className="w-5 h-5 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin mb-2" />
+                  <p className="text-xs">Gathering company intelligence...</p>
                 </div>
-                
-                <div className="grid grid-cols-2 gap-4 pt-2">
+              ) : (
+                <div className="space-y-4">
                   <div>
-                    <h4 className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1">Inferred Tech Stack</h4>
-                    <div className="flex flex-wrap gap-1.5 mt-1">
-                      {research.technologies?.split(',').map((tech: string) => (
-                        <span key={tech} className="px-2 py-0.5 rounded bg-neutral-950 border border-neutral-850 text-[10px] text-neutral-300 font-mono">
-                          {tech.trim()}
-                        </span>
-                      ))}
+                    <span className="text-[9px] font-mono text-neutral-500 uppercase tracking-wider block mb-1">Company Summary</span>
+                    <p className="text-[12px] text-neutral-300 leading-relaxed font-light">{research.summary}</p>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-6 pt-2 border-t border-white/5">
+                    <div>
+                      <span className="text-[9px] font-mono text-neutral-500 uppercase tracking-wider block mb-2">Inferred Technologies</span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {research.technologies?.split(',').map((tech: string) => (
+                          <span key={tech} className="px-2 py-0.5 rounded bg-black/40 border border-white/5 text-[9px] text-neutral-300 font-mono">
+                            {tech.trim()}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <span className="text-[9px] font-mono text-neutral-500 uppercase tracking-wider block mb-1.5">Employee Headcount</span>
+                      <p className="text-sm font-extrabold text-neutral-200 mt-1 font-mono tracking-tight">{research.employeeCount || "N/A"}</p>
                     </div>
                   </div>
-                  <div>
-                    <h4 className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1">Employee Count</h4>
-                    <p className="text-xs font-semibold text-neutral-300 mt-1">{research.employeeCount || "Unknown"} employees</p>
+
+                  <div className="pt-3 border-t border-white/5">
+                    <details className="cursor-pointer group">
+                      <summary className="text-[9px] font-mono text-neutral-500 uppercase tracking-wider hover:text-neutral-300 transition-colors">
+                        Raw Scraping JSON Metadata
+                      </summary>
+                      <pre className="mt-2.5 p-3.5 bg-black/40 border border-white/5 rounded-xl text-[10px] font-mono text-neutral-450 overflow-x-auto select-all max-h-[150px] leading-relaxed">
+                        {JSON.stringify(research.rawScrapedData, null, 2)}
+                      </pre>
+                    </details>
                   </div>
                 </div>
-
-                <div className="pt-3 border-t border-neutral-850/50">
-                  <details className="cursor-pointer">
-                    <summary className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Raw Scraping JSON Metadata</summary>
-                    <pre className="mt-2 p-3 bg-neutral-950 rounded-xl text-[10px] font-mono text-neutral-400 overflow-x-auto select-all max-h-[150px]">
-                      {JSON.stringify(research.rawScrapedData, null, 2)}
-                    </pre>
-                  </details>
-                </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
 
         {/* AI Scoring Box (1/3 width) */}
         <div className="space-y-6">
-          <div className="p-6 rounded-2xl bg-neutral-900 border border-neutral-900 shadow-md min-h-[360px] flex flex-col">
-            <h3 className="text-sm font-bold text-neutral-300 uppercase tracking-wider mb-4 text-center">
-              🎯 Lead Scoring
-            </h3>
+          <div className="glass-plate-textured p-6 shadow-md min-h-[360px] flex flex-col">
+            <div className="glass-content flex-1 flex flex-col">
+              <h3 className="font-display text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-4 text-center">
+                🎯 Lead Intent Scoring
+              </h3>
 
-            {lead.score === null ? (
-              <div className="flex-1 flex flex-col items-center justify-center text-neutral-500 text-center">
-                <div className="w-6 h-6 border-2 border-purple-500 border-t-transparent rounded-full animate-spin mb-2" />
-                <p className="text-xs">Evaluating company stack fit...</p>
-              </div>
-            ) : (
-              <div className="flex-1 flex flex-col items-center justify-center space-y-6">
-                {/* Visual Score Ring */}
-                <div className="relative w-32 h-32 rounded-full border-[10px] border-neutral-850 flex items-center justify-center">
-                  <div className="text-center">
-                    <p className="text-3xl font-extrabold text-neutral-100">{lead.score}</p>
-                    <p className="text-[9px] text-neutral-500 uppercase font-semibold">Match Score</p>
+              {lead.score === null ? (
+                <div className="flex-1 flex flex-col items-center justify-center text-neutral-500 text-center">
+                  <div className="w-5 h-5 border-2 border-purple-500 border-t-transparent rounded-full animate-spin mb-2" />
+                  <p className="text-xs">Evaluating pipeline match...</p>
+                </div>
+              ) : (
+                <div className="flex-1 flex flex-col items-center justify-center space-y-6">
+                  {/* Glowing Score Ring */}
+                  <div className="relative w-36 h-36 rounded-full border-[10px] border-white/5 flex items-center justify-center shadow-[0_0_40px_rgba(99,102,241,0.02)]">
+                    <div className="text-center">
+                      <p className="font-display text-4xl font-extrabold text-white tracking-tight tabular-nums">{lead.score}</p>
+                      <p className="text-[8px] text-neutral-550 uppercase tracking-wider font-bold mt-0.5">MATCH RATING</p>
+                    </div>
+                    {lead.score >= 80 && (
+                      <div className="absolute inset-0 rounded-full border-2 border-indigo-500/20 animate-ping opacity-60 pointer-events-none" />
+                    )}
                   </div>
-                  {/* Glowing halo if high score */}
-                  {lead.score >= 80 && (
-                    <div className="absolute inset-0 rounded-full border-2 border-indigo-500/30 animate-ping opacity-75" />
-                  )}
-                </div>
 
-                <div>
-                  <h4 className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1 text-center">AI Evaluation Reasoning</h4>
-                  <p className="text-xs text-neutral-400 leading-relaxed font-light text-center">
-                    {lead.scoreReasoning}
-                  </p>
+                  <div className="border-t border-white/5 pt-4 w-full text-center">
+                    <span className="text-[9px] font-mono text-neutral-500 uppercase tracking-wider block mb-1">AI Recommendation Reasoning</span>
+                    <p className="text-xs text-neutral-400 leading-relaxed font-light mt-1.5">
+                      {lead.scoreReasoning}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
 
       </div>
 
-      {/* Row 2: Outreach Approvals & simulated customer reply (Communication center) */}
+      {/* Row 2: Outreach Approvals & simulated customer reply */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
         {/* Action / Outreach Section (2/3 width) */}
@@ -246,22 +253,24 @@ export default function LeadDetailPage() {
           
           {/* Outreach Draft card */}
           {outreach && (
-            <div className="p-6 rounded-2xl bg-neutral-900 border border-neutral-900 shadow-md">
-              <h3 className="text-sm font-bold text-neutral-300 uppercase tracking-wider mb-4 flex items-center justify-between">
-                <span>💬 Personalization Outreach Seq</span>
-                <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
-                  outreach.status === 'APPROVED' 
-                    ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' 
-                    : 'bg-amber-500/10 border-amber-500/20 text-amber-400'
-                }`}>
-                  {outreach.status}
-                </span>
-              </h3>
+            <div className="glass-plate-textured p-6 shadow-md">
+              <div className="glass-content space-y-4">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="font-display text-[10px] font-bold text-neutral-400 uppercase tracking-widest">
+                    💬 Personalized Outreach Sequence
+                  </h3>
+                  <span className={`px-2 py-0.5 rounded text-[9px] font-bold border ${
+                    outreach.status === 'APPROVED' 
+                      ? 'bg-emerald-500/5 border-emerald-500/10 text-emerald-450' 
+                      : 'bg-amber-500/5 border-amber-500/10 text-amber-450'
+                  }`}>
+                    {outreach.status}
+                  </span>
+                </div>
 
-              <div className="space-y-4">
-                <div className="p-4 rounded-xl bg-neutral-950/60 border border-neutral-850 text-xs font-mono text-neutral-400 space-y-2">
-                  <p><strong>Subject:</strong> {outreach.subject}</p>
-                  <p className="whitespace-pre-line text-neutral-400/80 leading-relaxed border-t border-neutral-900 pt-2">{outreach.body}</p>
+                <div className="p-4 rounded-xl bg-black/40 border border-white/5 text-[11px] font-mono text-neutral-400 space-y-2 leading-relaxed bevel-shine-input">
+                  <p><strong className="text-neutral-300">Subject:</strong> {outreach.subject}</p>
+                  <p className="whitespace-pre-line text-neutral-450 border-t border-white/5 pt-2.5">{outreach.body}</p>
                 </div>
 
                 {outreach.status === 'DRAFT' && (
@@ -269,9 +278,9 @@ export default function LeadDetailPage() {
                     <button
                       onClick={handleApprove}
                       disabled={actionLoading}
-                      className="px-6 py-2.5 bg-indigo-500 hover:bg-indigo-600 disabled:bg-indigo-500/50 text-white rounded-xl text-xs font-bold transition-colors cursor-pointer"
+                      className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-650/40 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-indigo-500/10 cursor-pointer"
                     >
-                      {actionLoading ? "Sending outreach..." : "Approve and Send Outreach Email"}
+                      {actionLoading ? "Delivering..." : "Approve & Deliver Outreach Email"}
                     </button>
                   </div>
                 )}
@@ -279,84 +288,88 @@ export default function LeadDetailPage() {
             </div>
           )}
 
-          {/* Communication/Email Log logs */}
-          <div className="p-6 rounded-2xl bg-neutral-900 border border-neutral-900 shadow-md min-h-[200px]">
-            <h3 className="text-sm font-bold text-neutral-300 uppercase tracking-wider mb-4">
-              ✉️ Outgoing & Inbound Email History
-            </h3>
+          {/* Email History Logs */}
+          <div className="glass-plate-textured p-6 shadow-md min-h-[220px]">
+            <div className="glass-content space-y-4">
+              <h3 className="font-display text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-4">
+                ✉️ Outbox & Inbound Reply Ledger
+              </h3>
 
-            {emails.length === 0 ? (
-              <p className="text-xs text-neutral-500 italic">No email exchange logs yet.</p>
-            ) : (
-              <div className="space-y-4">
-                {emails.map((email: any) => {
-                  const isOutbound = email.direction === 'OUTBOUND';
-                  return (
-                    <div 
-                      key={email.id} 
-                      className={`p-4 rounded-xl border text-xs leading-relaxed ${
-                        isOutbound 
-                          ? 'bg-indigo-500/5 border-indigo-500/10 text-neutral-300 ml-6' 
-                          : 'bg-neutral-950 border-neutral-850 text-neutral-300 mr-6'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between text-[10px] text-neutral-500 mb-2 font-mono">
-                        <span className="font-semibold">{isOutbound ? '📤 SENT OUTBOUND' : '📥 RECEIVED INBOUND'}</span>
-                        <span>{new Date(email.processedAt).toLocaleString()}</span>
+              {emails.length === 0 ? (
+                <p className="text-xs text-neutral-500 italic font-light font-sans">No email exchanges logged yet.</p>
+              ) : (
+                <div className="space-y-4">
+                  {emails.map((email: any) => {
+                    const isOutbound = email.direction === 'OUTBOUND';
+                    return (
+                      <div 
+                        key={email.id} 
+                        className={`p-4 rounded-xl border text-[11px] leading-relaxed ${
+                          isOutbound 
+                            ? 'bg-indigo-500/5 border-indigo-500/10 text-neutral-300 ml-6 shadow-sm' 
+                            : 'bg-black/40 border-white/5 text-neutral-300 mr-6 shadow-inner bevel-shine-input'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between text-[9px] text-neutral-550 mb-2 font-mono uppercase tracking-wider font-bold">
+                          <span>{isOutbound ? '📤 OUTGOING EMAIL' : '📥 INBOUND REPLY'}</span>
+                          <span>{new Date(email.processedAt).toLocaleString()}</span>
+                        </div>
+                        <h4 className="font-bold mb-1.5 text-neutral-200">{email.subject}</h4>
+                        <p className="whitespace-pre-line text-neutral-400 leading-relaxed font-light">{email.body}</p>
                       </div>
-                      <h4 className="font-bold mb-1">{email.subject}</h4>
-                      <p className="whitespace-pre-line text-neutral-400/90 font-light">{email.body}</p>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* Customer simulation playground (1/3 width) */}
+        {/* Customer simulation playground (1/3 width) - Pink highlights */}
         <div className="space-y-6">
-          <div className="p-6 rounded-2xl bg-gradient-to-br from-neutral-900 to-pink-950/10 border border-neutral-900 shadow-md min-h-[300px]">
-            <h3 className="text-sm font-bold text-pink-400 uppercase tracking-wider mb-4 flex items-center gap-1.5">
-              <span>🎮</span> Inbound Simulation Sandbox
-            </h3>
-            
-            <p className="text-[11px] text-neutral-400 leading-relaxed mb-4">
-              Simulate receiving a reply email from this lead. Hit send and watch the AI agent analyze the email text and automatically flag interest or archive the CRM state!
-            </p>
+          <div className="glass-plate-textured p-6 shadow-[0_0_30px_rgba(236,72,153,0.02)] border border-pink-500/10 min-h-[300px]">
+            <div className="glass-content">
+              <h3 className="font-display text-[10px] font-bold text-pink-400 uppercase tracking-widest mb-4 flex items-center gap-1.5">
+                <span>🎮</span> SIMULATION SANDBOX
+              </h3>
+              
+              <p className="text-[10px] text-neutral-450 leading-relaxed mb-4 font-light">
+                Simulate a customer response. When delivered, AI classifies the text sentiment, categorizes action items, and automates CRM status updates in real-time.
+              </p>
 
-            <form onSubmit={handleSimulateReply} className="space-y-4">
-              <div>
-                <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1.5">Subject Line</label>
-                <input
-                  type="text"
-                  required
-                  value={replySubject}
-                  onChange={(e) => setReplySubject(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg bg-neutral-950/60 border border-neutral-850 focus:border-pink-500 focus:outline-none text-xs text-neutral-350 transition-all font-mono"
-                />
-              </div>
+              <form onSubmit={handleSimulateReply} className="space-y-4">
+                <div>
+                  <label className="block text-[9px] font-bold text-neutral-555 uppercase tracking-widest mb-1.5">Subject Line</label>
+                  <input
+                    type="text"
+                    required
+                    value={replySubject}
+                    onChange={(e) => setReplySubject(e.target.value)}
+                    className="w-full px-3 py-2.5 rounded-lg bg-black/40 border border-white/5 focus:border-pink-500 focus:outline-none text-[11px] text-neutral-350 transition-all font-mono bevel-shine-input"
+                  />
+                </div>
 
-              <div>
-                <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1.5">Email Body</label>
-                <textarea
-                  required
-                  rows={4}
-                  value={replyBody}
-                  onChange={(e) => setReplyBody(e.target.value)}
-                  placeholder="Examples:\n1) 'Hey! This sounds interesting, let's chat next Wednesday at 3pm.'\n2) 'Please stop emailing me, remove me from your list.'"
-                  className="w-full px-3 py-2.5 rounded-lg bg-neutral-950/60 border border-neutral-850 focus:border-pink-500 focus:outline-none text-xs text-neutral-200 transition-all font-light"
-                />
-              </div>
+                <div>
+                  <label className="block text-[9px] font-bold text-neutral-555 uppercase tracking-widest mb-1.5">Email Body Content</label>
+                  <textarea
+                    required
+                    rows={4}
+                    value={replyBody}
+                    onChange={(e) => setReplyBody(e.target.value)}
+                    placeholder="e.g. 'Hey Jensen, I am interested, let's schedule a call next Tuesday at 3pm.' or 'Unsubscribe.'"
+                    className="w-full px-3 py-2.5 rounded-lg bg-black/40 border border-white/5 focus:border-pink-500 focus:outline-none text-[11px] text-neutral-200 transition-all font-light bevel-shine-input leading-relaxed"
+                  />
+                </div>
 
-              <button
-                type="submit"
-                disabled={simulating || !replyBody}
-                className="w-full py-2.5 bg-gradient-to-r from-pink-500/20 to-indigo-500/20 hover:from-pink-500/30 hover:to-indigo-500/30 border border-pink-500/30 text-pink-400 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer"
-              >
-                {simulating ? "Processing reply..." : "Deliver Inbound Reply Simulated"}
-              </button>
-            </form>
+                <button
+                  type="submit"
+                  disabled={simulating || !replyBody}
+                  className="w-full py-2.5 bg-gradient-to-r from-pink-500/10 to-indigo-500/10 hover:from-pink-500/20 hover:to-indigo-500/20 border border-pink-500/20 text-pink-450 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  {simulating ? "Processing reply..." : "Deliver Simulated Inbound"}
+                </button>
+              </form>
+            </div>
           </div>
         </div>
 
