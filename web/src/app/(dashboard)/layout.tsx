@@ -59,6 +59,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const navItems = [
     { name: "Dashboard Overview", href: "/dashboard", icon: "📊" },
     { name: "Leads Pipeline", href: "/leads", icon: "👥" },
+    { name: "Agent Playground", href: "/agent-config", icon: "🤖" },
   ];
 
   if (status === "loading") {
