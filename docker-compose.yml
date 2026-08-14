@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: agentcrm-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+      POSTGRES_DB: agentcrm
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - agentcrm-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: agentcrm-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - agentcrm-network
+
+  maildev:
+    image: maildev/maildev:latest
+    container_name: agentcrm-maildev
+    ports:
+      - "1025:1025" # SMTP port
+      - "1080:1080" # Web UI port
+    networks:
+      - agentcrm-network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  agentcrm-network:
+    driver: bridge

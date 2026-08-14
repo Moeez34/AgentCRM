@@ -1,0 +1,25 @@
+{
+  "name": "agentcrm-worker",
+  "version": "1.0.0",
+  "description": "Background worker and socket server for AgentCRM",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "tsx src/index.ts"
+  },
+  "dependencies": {
+    "bullmq": "^5.8.5",
+    "dotenv": "^16.4.5",
+    "drizzle-orm": "^0.30.10",
+    "ioredis": "^5.4.1",
+    "pg": "^8.11.5",
+    "socket.io": "^4.7.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.12",
+    "@types/pg": "^8.11.6",
+    "tsx": "^4.10.5",
+    "typescript": "^5.4.5"
+  }
+}
