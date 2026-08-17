@@ -7,12 +7,12 @@
  *
  * Notes (approximate): C5 → E5 → G5 → C6 with smooth overlap and reverb tail.
  */
-export function playWindowsStartup(): void {
+export function playWindowsStartup(existingCtx?: AudioContext): void {
   try {
     const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-    if (!AudioCtx) return;
+    if (!AudioCtx && !existingCtx) return;
 
-    const ctx = new AudioCtx();
+    const ctx = existingCtx ?? new AudioCtx();
     if (ctx.state === "suspended") {
       ctx.resume();
     }

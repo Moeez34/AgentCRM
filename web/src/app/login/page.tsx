@@ -16,16 +16,32 @@ export default function LoginPage() {
   const audioCtxRef = useRef<AudioContext | null>(null);
 
   useEffect(() => {
+    // Try to pre-create & resume AudioContext immediately on mount.
+    // Modern Chrome/Edge often allow this; if suspended, the first gesture will resume it.
+    const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    if (AudioCtx && !audioCtxRef.current) {
+      try {
+        const ctx = new AudioCtx();
+        audioCtxRef.current = ctx;
+        if (ctx.state === "suspended") ctx.resume();
+      } catch {
+        // Will retry on first gesture
+      }
+    }
+
     // Pre-unlock the AudioContext on the very first user gesture so that the
     // scheduled Windows startup sound at ~3.5s can play automatically.
     const unlockAudio = () => {
       if (!audioCtxRef.current) {
-        const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
         if (AudioCtx) {
-          const ctx = new AudioCtx();
-          audioCtxRef.current = ctx;
-          if (ctx.state === "suspended") ctx.resume();
+          try {
+            const ctx = new AudioCtx();
+            audioCtxRef.current = ctx;
+            if (ctx.state === "suspended") ctx.resume();
+          } catch { /* ignore */ }
         }
+      } else if (audioCtxRef.current.state === "suspended") {
+        audioCtxRef.current.resume();
       }
       cleanup();
     };
@@ -45,7 +61,8 @@ export default function LoginPage() {
     const soundTimer = setTimeout(() => {
       if (!soundPlayed.current) {
         soundPlayed.current = true;
-        playWindowsStartup();
+        // Pass the pre-unlocked context so the sound bypasses autoplay block
+        playWindowsStartup(audioCtxRef.current ?? undefined);
       }
     }, 3500);
 
