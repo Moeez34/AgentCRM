@@ -6,7 +6,7 @@ import { leads, leadResearch, outreachMessages, emailLogs, auditLogs, notificati
 import { eq, desc, sql, and } from "drizzle-orm";
 import { mockDb } from "@/lib/mockDb";
 import { enqueueCrmJob } from "@/lib/queue";
-import { getEmbedding } from "../../../worker/src/ai";
+import { getEmbedding } from "@/lib/embedding";
 import crypto from "crypto";
 
 // Helper to determine if we are in Postgres mode or Offline Mock mode

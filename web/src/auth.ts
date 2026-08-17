@@ -3,7 +3,6 @@ import Credentials from "next-auth/providers/credentials";
 import { db } from "./db";
 import { users } from "./db/schema";
 import { eq } from "drizzle-orm";
-import crypto from "crypto";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -23,7 +22,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           
           const user = userList[0];
           
-          // Verify SHA256 password hash
+          // Verify SHA256 password hash (Dynamic import to bypass Edge Compilation)
+          const crypto = await import("crypto");
           const hash = crypto.createHash('sha256').update(credentials.password as string).digest('hex');
           if (user.password !== hash) return null;
           

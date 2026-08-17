@@ -65,7 +65,7 @@ async function simulateJobProcessing(data: { type: string; leadId: string; orgId
   const { db } = await import('@/db');
   const { leads, leadResearch, outreachMessages, notifications, emailLogs, auditLogs } = await import('@/db/schema');
   const { eq } = await import('drizzle-orm');
-  const { researchCompany, scoreLead, getEmbedding, generateOutreach, analyzeInboundReply } = await import('../../../worker/src/ai');
+  const { researchCompany, scoreLead, getEmbedding, generateOutreach, analyzeInboundReply } = await import('@/lib/embedding');
 
   try {
     // Check if lead exists
