@@ -6,63 +6,59 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import AuthModal from "@/components/ui/auth-modal";
 import AppleHelloSvg from "@/components/ui/apple-hello-svg";
-import { playMacbookChime } from "@/lib/macbook-chime";
+import { playWindowsStartup } from "@/lib/windows-startup";
 
 export default function LoginPage() {
   const [showHello, setShowHello] = useState(true);
   const router = useRouter();
-  const chimePlayed = useRef(false);
-
-  const triggerChime = () => {
-    if (chimePlayed.current) return;
-    chimePlayed.current = true;
-
-    // Play MacBook startup chime (.wav file + Web Audio synthesizer fallback)
-    try {
-      const audio = new Audio("/macbook-chime.wav");
-      audio.volume = 1.0;
-      const playPromise = audio.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(() => {
-          // Fallback to Web Audio synthesis if browser autoplay blocks the wav file
-          playMacbookChime();
-        });
-      }
-    } catch {
-      playMacbookChime();
-    }
-  };
+  const soundPlayed = useRef(false);
+  // Hold a pre-unlocked AudioContext so it's ready by the time the hello finishes
+  const audioCtxRef = useRef<AudioContext | null>(null);
 
   useEffect(() => {
-    // Attempt automatic playback on mount
-    triggerChime();
-
-    // Bypass browser autoplay policy on first user gesture
-    const onFirstGesture = () => {
-      triggerChime();
+    // Pre-unlock the AudioContext on the very first user gesture so that the
+    // scheduled Windows startup sound at ~3.5s can play automatically.
+    const unlockAudio = () => {
+      if (!audioCtxRef.current) {
+        const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+        if (AudioCtx) {
+          const ctx = new AudioCtx();
+          audioCtxRef.current = ctx;
+          if (ctx.state === "suspended") ctx.resume();
+        }
+      }
       cleanup();
     };
 
     const cleanup = () => {
-      window.removeEventListener("pointerdown", onFirstGesture);
-      window.removeEventListener("click", onFirstGesture);
-      window.removeEventListener("keydown", onFirstGesture);
-      window.removeEventListener("touchstart", onFirstGesture);
+      window.removeEventListener("pointerdown", unlockAudio);
+      window.removeEventListener("keydown", unlockAudio);
+      window.removeEventListener("touchstart", unlockAudio);
     };
 
-    window.addEventListener("pointerdown", onFirstGesture);
-    window.addEventListener("click", onFirstGesture);
-    window.addEventListener("keydown", onFirstGesture);
-    window.addEventListener("touchstart", onFirstGesture);
+    window.addEventListener("pointerdown", unlockAudio);
+    window.addEventListener("keydown", unlockAudio);
+    window.addEventListener("touchstart", unlockAudio);
+
+    // Play Windows startup sound exactly when hello finishes writing:
+    // delay 0.3s + h draw 1.0s + ello draw 2.2s = 3.5s
+    const soundTimer = setTimeout(() => {
+      if (!soundPlayed.current) {
+        soundPlayed.current = true;
+        playWindowsStartup();
+      }
+    }, 3500);
 
     // Transition to sign-in page after 6.0 seconds (3.5s animation + 2.5s hold)
     const timer = setTimeout(() => setShowHello(false), 6000);
 
     return () => {
       clearTimeout(timer);
+      clearTimeout(soundTimer);
       cleanup();
     };
   }, []);
+
 
   const handleDemoLogin = async () => {
     try {
