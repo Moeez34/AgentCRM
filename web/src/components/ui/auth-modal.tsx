@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence, type Variants } from "framer-motion";
 import { X, Mail, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -52,6 +53,11 @@ function AuthModal({
 }: AuthModalProps) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [email, setEmail] = React.useState("");
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const container: Variants = {
     hidden: { opacity: 0, scale: 0.95 },
@@ -118,28 +124,29 @@ function AuthModal({
         </span>
       </button>
 
-      <AnimatePresence>
-        {isOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-0">
-            {/* Backdrop Blur */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsOpen(false)}
-              className="absolute inset-0 bg-black/60 backdrop-blur-md"
-            />
+      {mounted && typeof document !== "undefined" && createPortal(
+        <AnimatePresence>
+          {isOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-0">
+              {/* Backdrop Blur */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setIsOpen(false)}
+                className="absolute inset-0 bg-black/60 backdrop-blur-md"
+              />
 
-            {/* Black Glass Dialog Container */}
-            <motion.div
-              variants={container}
-              initial="hidden"
-              animate="show"
-              exit="exit"
-              className="relative w-full max-w-[360px] overflow-hidden rounded-3xl bg-zinc-950 p-6 shadow-2xl backdrop-blur-2xl border border-zinc-800/80 ring-1 ring-white/10 text-white"
-            >
+              {/* Black Glass Dialog Container */}
+              <motion.div
+                variants={container}
+                initial="hidden"
+                animate="show"
+                exit="exit"
+                className="relative w-full max-w-md overflow-hidden rounded-[32px] bg-zinc-950 p-8 shadow-2xl backdrop-blur-2xl border border-zinc-800/80 ring-1 ring-white/10 text-white"
+              >
               {/* Close Button */}
-              <div className="absolute right-4 top-4">
+              <div className="absolute right-5 top-5">
                 <button
                   onClick={() => setIsOpen(false)}
                   className="rounded-full p-2 text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200 transition-colors cursor-pointer"
@@ -149,11 +156,11 @@ function AuthModal({
               </div>
 
               {/* Header with Styled Typography */}
-              <motion.div variants={item} className="mb-8 text-center">
-                <h2 className="text-2xl font-semibold tracking-tight text-white">
+              <motion.div variants={item} className="mb-10 text-center">
+                <h2 className="text-3xl font-semibold tracking-tight text-white">
                   Welcome <span className="font-bold italic">back</span>
                 </h2>
-                <p className="mt-2 text-sm text-zinc-400">
+                <p className="mt-3 text-sm text-zinc-400">
                   Sign in to your account to{" "}
                   <span className="bg-gradient-to-r from-blue-400 via-sky-300 to-purple-400 bg-clip-text text-transparent font-semibold">
                     continue
@@ -164,14 +171,14 @@ function AuthModal({
               {/* Provider Options */}
               <motion.div
                 variants={item}
-                className="grid grid-cols-2 gap-3 mb-8"
+                className="grid grid-cols-2 gap-4 mb-8"
               >
                 {socialButtons.map((btn, i) => (
                   <button
                     key={i}
                     onClick={() => onLogin?.(btn.label)}
                     className={cn(
-                      "flex h-12 items-center justify-center gap-2 rounded-2xl border border-zinc-800 bg-zinc-900/90 font-medium text-sm text-white transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer",
+                      "flex h-12 items-center justify-center gap-2 rounded-2xl border border-zinc-800 bg-zinc-900/90 font-semibold text-sm text-white transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer",
                       btn.color
                     )}
                     aria-label={`Sign in with ${btn.label}`}
@@ -188,7 +195,7 @@ function AuthModal({
                   <span className="w-full border-t border-zinc-800" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-zinc-950 px-2.5 text-zinc-500 font-mono tracking-wider">
+                  <span className="bg-zinc-950 px-3 text-zinc-500 font-mono tracking-widest text-[10px]">
                     Or continue with email
                   </span>
                 </div>
@@ -197,17 +204,17 @@ function AuthModal({
               {/* Email Form */}
               <motion.div variants={item}>
                 <form onSubmit={handleEmailSubmit} className="relative">
-                  <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-500" />
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="name@example.com"
-                    className="h-11 w-full rounded-full border border-zinc-800 bg-zinc-900/70 pl-10 pr-12 text-sm text-white placeholder:text-zinc-500 outline-none transition-all focus:border-zinc-700 focus:bg-zinc-900 focus:ring-1 focus:ring-zinc-700"
+                    className="h-12 w-full rounded-2xl border border-zinc-800 bg-zinc-900/70 pl-12 pr-14 text-sm text-white placeholder:text-zinc-500 outline-none transition-all focus:border-zinc-700 focus:bg-zinc-900 focus:ring-1 focus:ring-zinc-700"
                   />
                   <button
                     type="submit"
-                    className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-full h-8 w-8 flex items-center justify-center bg-white text-zinc-950 transition-transform hover:scale-95 active:scale-90 font-bold cursor-pointer"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 rounded-xl h-8 w-8 flex items-center justify-center bg-white text-zinc-950 transition-transform hover:scale-95 active:scale-90 font-bold cursor-pointer"
                   >
                     <ArrowRight className="h-4 w-4" />
                   </button>
@@ -215,19 +222,19 @@ function AuthModal({
               </motion.div>
 
               {/* Terms Footer */}
-              <motion.div variants={item} className="mt-8 text-center">
-                <p className="text-xs text-zinc-500">
+              <motion.div variants={item} className="mt-10 text-center">
+                <p className="text-xs text-zinc-500 leading-relaxed">
                   By clicking continue, you agree to our{" "}
                   <a
                     href="#"
-                    className="underline hover:text-zinc-300"
+                    className="underline hover:text-zinc-300 transition-colors"
                   >
                     Terms of Service
                   </a>{" "}
                   and{" "}
                   <a
                     href="#"
-                    className="underline hover:text-zinc-300"
+                    className="underline hover:text-zinc-300 transition-colors"
                   >
                     Privacy Policy
                   </a>
@@ -236,7 +243,9 @@ function AuthModal({
             </motion.div>
           </div>
         )}
-      </AnimatePresence>
+      </AnimatePresence>,
+      document.body
+    )}
     </>
   );
 }
