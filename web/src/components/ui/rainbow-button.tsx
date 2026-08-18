@@ -43,10 +43,7 @@ export const RainbowButton = React.forwardRef<
         className
       )}
       style={{
-        background:
-          variant === "default"
-            ? `linear-gradient(#09090b, #09090b) padding-box, ${rainbow} border-box`
-            : `linear-gradient(transparent, transparent) padding-box, ${rainbow} border-box`,
+        background: `linear-gradient(#09090b, #09090b) padding-box, ${rainbow} border-box`,
         backgroundSize: "200% auto",
         animation: "rainbow 3s linear infinite",
       }}
