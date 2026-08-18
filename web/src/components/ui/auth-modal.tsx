@@ -169,7 +169,7 @@ function AuthModal({
                         preserveAspectRatio="none"
                       >
                         <motion.path
-                          d="M97 2 C 65 8, 35 8, 3 2 C 35 9, 65 9, 95 3"
+                          d="M97 8 C 65 2, 35 2, 3 8 C 35 1, 65 1, 95 7"
                           stroke="white"
                           initial={{ pathLength: 0 }}
                           animate={{ pathLength: 1 }}
