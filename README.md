@@ -57,3 +57,9 @@ React
 JavaScript / TypeScript
 Tailwind CSS
 Framer Motion
+
+Backend
+Node.js
+Express.js
+REST APIs
+JWT Authentication
