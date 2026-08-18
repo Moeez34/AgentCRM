@@ -157,8 +157,27 @@ function AuthModal({
 
               {/* Header with Styled Typography */}
               <motion.div variants={item} className="mb-10 text-center">
-                <h2 className="text-3xl font-semibold tracking-tight text-white">
-                  Welcome <span className="font-bold italic">back</span>
+                <h2 className="text-3xl font-semibold tracking-tight text-white flex items-center justify-center gap-2">
+                  Welcome{" "}
+                  <span className="relative font-lobster text-4xl text-white px-2 py-0.5 select-none">
+                    back
+                    {/* Animated Hand-drawn Underline SVG */}
+                    <span className="absolute left-0 right-0 -bottom-2 h-3 pointer-events-none">
+                      <svg
+                        viewBox="0 0 100 10"
+                        className="w-full h-full fill-none stroke-[2.5] stroke-linecap-round"
+                        preserveAspectRatio="none"
+                      >
+                        <motion.path
+                          d="M3 2 C 35 8, 65 8, 97 2 C 65 9, 35 9, 5 3"
+                          stroke="white"
+                          initial={{ pathLength: 0 }}
+                          animate={{ pathLength: 1 }}
+                          transition={{ duration: 0.9, delay: 0.4, ease: "easeOut" }}
+                        />
+                      </svg>
+                    </span>
+                  </span>
                 </h2>
                 <p className="mt-3 text-sm text-zinc-400">
                   Sign in to your account to{" "}

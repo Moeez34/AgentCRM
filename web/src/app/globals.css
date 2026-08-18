@@ -78,6 +78,10 @@ body::before {
   font-family: var(--font-display);
 }
 
+.font-lobster {
+  font-family: var(--font-lobster), cursive;
+}
+
 /* Numeric column vertical align */
 .tabular-nums {
   font-variant-numeric: tabular-nums;
