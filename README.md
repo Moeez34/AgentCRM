@@ -26,3 +26,25 @@ Communication Tone	Casual, Direct, Academic, Humorous
 Customer ICP	Defines the ideal customer profile
 Auto Sequences	Enables automated follow-ups
 Agent Status	Activate or pause an agent
+
+Architecture
+                    ┌──────────────────┐
+                    │   React Client   │
+                    │   Dashboard UI   │
+                    └────────┬─────────┘
+                             │
+                             │ HTTP / REST
+                             ▼
+                    ┌──────────────────┐
+                    │   Node.js API    │
+                    │    Express.js    │
+                    └────────┬─────────┘
+                             │
+             ┌───────────────┼───────────────┐
+             ▼               ▼               ▼
+       ┌──────────┐    ┌──────────┐    ┌──────────┐
+       │ Database │    │ AI Layer │    │  Auth    │
+       └──────────┘    └──────────┘    └──────────┘
+                             │
+                             ▼
+                     AI Sales Agents
