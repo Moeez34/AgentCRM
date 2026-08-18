@@ -75,3 +75,61 @@ Git & GitHub
 Postman
 VS Code
 Docker
+
+
+Getting Started
+1. Clone the repository
+git clone https://github.com/yourusername/agentcrm.git
+
+cd agentcrm
+2. Install dependencies
+cd client
+npm install
+
+cd ../server
+npm install
+3. Configure environment variables
+
+Create a .env file inside the server directory:
+
+PORT=5000
+DATABASE_URL=your_database_url
+JWT_SECRET=your_jwt_secret
+AI_API_KEY=your_ai_api_key
+4. Start the backend
+cd server
+npm run dev
+5. Start the frontend
+cd client
+npm run dev
+
+The application will now be available locally.
+
+🔐 Environment Variables
+
+Never commit secrets to GitHub.
+
+Use .env.example:
+
+PORT=
+DATABASE_URL=
+JWT_SECRET=
+AI_API_KEY=
+🧪 API Overview
+
+Example endpoints:
+
+POST   /api/auth/register
+POST   /api/auth/login
+
+GET    /api/agents
+POST   /api/agents
+GET    /api/agents/:id
+PATCH  /api/agents/:id
+DELETE /api/agents/:id
+
+GET    /api/leads
+POST   /api/leads
+
+POST   /api/agents/:id/run
+PATCH  /api/agents/:id/status
