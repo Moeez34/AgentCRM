@@ -48,3 +48,12 @@ Architecture
                              │
                              ▼
                      AI Sales Agents
+
+
+
+Tech Stack
+Frontend
+React
+JavaScript / TypeScript
+Tailwind CSS
+Framer Motion
