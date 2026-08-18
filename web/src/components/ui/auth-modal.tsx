@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { motion, AnimatePresence, type Variants } from "framer-motion";
 import { X, Mail, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { RainbowButton } from "./rainbow-button";
 
 // Google Icon
 const GoogleIcon = ({ className }: { className?: string }) => (
@@ -174,18 +175,16 @@ function AuthModal({
                 className="grid grid-cols-2 gap-4 mb-8"
               >
                 {socialButtons.map((btn, i) => (
-                  <button
+                  <RainbowButton
                     key={i}
                     onClick={() => onLogin?.(btn.label)}
-                    className={cn(
-                      "flex h-12 items-center justify-center gap-2 rounded-2xl border border-zinc-800 bg-zinc-900/90 font-semibold text-sm text-white transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer",
-                      btn.color
-                    )}
+                    variant="outline"
+                    className="flex h-12 w-full items-center justify-center gap-2 rounded-2xl font-semibold text-sm text-white cursor-pointer"
                     aria-label={`Sign in with ${btn.label}`}
                   >
                     <btn.icon className="h-5 w-5" />
                     <span>{btn.label}</span>
-                  </button>
+                  </RainbowButton>
                 ))}
               </motion.div>
 
@@ -201,38 +200,24 @@ function AuthModal({
                 </div>
               </motion.div>
 
-              {/* Email Form with Rainbow Border */}
+              {/* Email Form */}
               <motion.div variants={item}>
-                {/* Rainbow outline wrapper — animates a rotating gradient as the border */}
-                <div
-                  className="rounded-2xl p-[2px] animate-rainbow"
-                  style={{
-                    background:
-                      "linear-gradient(90deg,#ff0000,#ff7300,#ffff00,#00ff00,#0070f3,#7928ca,#ff0000)",
-                    backgroundSize: "200% auto",
-                    animation: "rainbow 3s linear infinite",
-                  }}
-                >
-                  <form
-                    onSubmit={handleEmailSubmit}
-                    className="relative rounded-[14px] bg-zinc-950 overflow-hidden"
+                <form onSubmit={handleEmailSubmit} className="relative">
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-500" />
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="name@example.com"
+                    className="h-12 w-full rounded-2xl border border-zinc-800 bg-zinc-900/70 pl-12 pr-14 text-sm text-white placeholder:text-zinc-500 outline-none transition-all focus:border-zinc-700 focus:bg-zinc-900 focus:ring-1 focus:ring-zinc-700"
+                  />
+                  <button
+                    type="submit"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 rounded-xl h-8 w-8 flex items-center justify-center bg-white text-zinc-950 transition-transform hover:scale-95 active:scale-90 font-bold cursor-pointer"
                   >
-                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-500" />
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="name@example.com"
-                      className="h-12 w-full bg-transparent pl-12 pr-14 text-sm text-white placeholder:text-zinc-500 outline-none"
-                    />
-                    <button
-                      type="submit"
-                      className="absolute right-2 top-1/2 -translate-y-1/2 rounded-xl h-8 w-8 flex items-center justify-center bg-white text-zinc-950 transition-transform hover:scale-95 active:scale-90 font-bold cursor-pointer"
-                    >
-                      <ArrowRight className="h-4 w-4" />
-                    </button>
-                  </form>
-                </div>
+                    <ArrowRight className="h-4 w-4" />
+                  </button>
+                </form>
               </motion.div>
 
               {/* Terms Footer */}
