@@ -16,3 +16,13 @@ Configure an agent's personality, target customer profile, outreach rules, and a
 
 
 Agent Playground
+The core of AgentCRM is the Agent Playground.
+
+Sales representatives can configure:
+
+Setting	Description
+AI Creativity	Controls how deterministic or creative the agent is
+Communication Tone	Casual, Direct, Academic, Humorous
+Customer ICP	Defines the ideal customer profile
+Auto Sequences	Enables automated follow-ups
+Agent Status	Activate or pause an agent
