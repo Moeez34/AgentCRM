@@ -19,7 +19,7 @@ Agent Playground
 The core of AgentCRM is the Agent Playground.
 
 Sales representatives can configure:
-
+This turns AI configuration into an intuitive workspace instead of hiding everything behind complicated prompts.
 Setting	Description
 AI Creativity	Controls how deterministic or creative the agent is
 Communication Tone	Casual, Direct, Academic, Humorous
