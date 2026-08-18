@@ -63,3 +63,15 @@ Node.js
 Express.js
 REST APIs
 JWT Authentication
+
+Database
+MongoDB / PostgreSQL
+AI
+LLM-powered agent workflows
+Configurable agent parameters
+Automated sales reasoning and outreach
+Development
+Git & GitHub
+Postman
+VS Code
+Docker
