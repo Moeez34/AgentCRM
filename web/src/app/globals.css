@@ -101,14 +101,3 @@ body::before {
 .btn-glass:active {
   transform: translateY(0px);
 }
-
-/* ── Rainbow border animation (used by RainbowButton) ── */
-@keyframes rainbow {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-.animate-rainbow {
-  animation: rainbow 3s linear infinite;
-}

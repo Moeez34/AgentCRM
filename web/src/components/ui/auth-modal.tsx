@@ -5,7 +5,6 @@ import { createPortal } from "react-dom";
 import { motion, AnimatePresence, type Variants } from "framer-motion";
 import { X, Mail, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { RainbowButton } from "./rainbow-button";
 
 // Google Icon
 const GoogleIcon = ({ className }: { className?: string }) => (
@@ -175,16 +174,18 @@ function AuthModal({
                 className="grid grid-cols-2 gap-4 mb-8"
               >
                 {socialButtons.map((btn, i) => (
-                  <RainbowButton
+                  <button
                     key={i}
                     onClick={() => onLogin?.(btn.label)}
-                    variant="outline"
-                    className="flex h-12 w-full items-center justify-center gap-2 rounded-2xl font-semibold text-sm text-white cursor-pointer"
+                    className={cn(
+                      "flex h-12 items-center justify-center gap-2 rounded-2xl border border-zinc-800 bg-zinc-900/90 font-semibold text-sm text-white transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer",
+                      btn.color
+                    )}
                     aria-label={`Sign in with ${btn.label}`}
                   >
                     <btn.icon className="h-5 w-5" />
                     <span>{btn.label}</span>
-                  </RainbowButton>
+                  </button>
                 ))}
               </motion.div>
 
