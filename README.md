@@ -12,3 +12,7 @@ Configure an agent's personality, target customer profile, outreach rules, and a
 🔐 Authentication — Secure user authentication and protected resources
 ⚡ Real-time Agent Activity — Monitor what your agents are doing
 📱 Responsive UI — Designed for desktop and modern web experiences
+
+
+
+Agent Playground
